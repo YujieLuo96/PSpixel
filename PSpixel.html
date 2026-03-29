@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CYBER PIXEL STUDIO // DUAL MODE</title>
+    <link rel="stylesheet" href="pspixel.css">
+    <link rel="stylesheet" href="rsa.css">
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ── 顶部导航栏 ─────────────────────────────────────────────── -->
+    <div class="top-bar">
+        <button id="singleModeBtn" class="mode-btn active">⚡ SINGLE PIXEL STUDIO</button>
+        <button id="mixModeBtn"    class="mode-btn">🌀 DUAL IMAGE MIX</button>
+        <button id="rsaModeBtn"    class="mode-btn">🔐 RSA PIXEL ENCRYPT</button>
+    </div>
+
+    <div class="root">
+
+        <!-- ════════════════════════════════════════════════════════
+             左侧面板容器
+             ════════════════════════════════════════════════════════ -->
+        <div class="panel-left">
+
+            <!-- ── 单图模式面板（不改动）────────────────────────── -->
+            <div id="singlePanel" class="mode-panel active">
+                <div class="card">
+                    <div class="card-label">🎴 UPLOAD IMAGE</div>
+                    <div id="singleDropZone" class="drop-zone">
+                        <div class="drop-icon">⬆️ ⎔</div>
+                        <div class="drop-text">DRAG & DROP IMAGE</div>
+                        <div class="drop-text" style="font-size: 0.55rem;">or click to browse</div>
+                        <input type="file" id="singleFileInput"
+                               accept="image/jpeg, image/png, image/webp, image/bmp"
+                               style="display: none;">
+                        <div id="singleFileInfo" class="file-info">waiting for upload...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-label">🧩 PIXEL RESOLUTION</div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>◢ HORIZONTAL BLOCKS [N]</span>
+                            <input type="number" id="singleNInput" class="numeric-input"
+                                   min="4" max="2000" step="1" value="32">
+                            <span id="singleNValue" class="slider-value">32</span>
+                        </div>
+                        <input type="range" id="singleNSlider" min="4" max="2000" value="32" step="1">
+                        <div style="font-size:0.6rem; color:var(--dim); margin-top:4px;">
+                            max ≤ <span id="singleNMax">—</span> (image width)
+                        </div>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>◣ VERTICAL BLOCKS [M]</span>
+                            <input type="number" id="singleMInput" class="numeric-input"
+                                   min="4" max="2000" step="1" value="32">
+                            <span id="singleMValue" class="slider-value">32</span>
+                        </div>
+                        <input type="range" id="singleMSlider" min="4" max="2000" value="32" step="1">
+                        <div style="font-size:0.6rem; color:var(--dim); margin-top:4px;">
+                            max ≤ <span id="singleMMax">—</span> (image height)
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span>⚡ TOTAL PIXEL BLOCKS</span>
+                        <span id="singleTotalBlocks" style="color: var(--pink);">1024</span>
+                    </div>
+                    <button id="singleGenerateBtn" class="neon-btn btn-pixelate">⚡ GENERATE PIXEL ART</button>
+                    <button id="singleDuoToneBtn"  class="neon-btn"
+                            style="border-color: var(--yellow); color: var(--yellow);">◈ DUO TONE MIX</button>
+
+                    <!-- 像素平均 -->
+                    <div class="slider-group" style="margin-top:14px;">
+                        <div class="slider-header">
+                            <span>◉ AVERAGE RADIUS [d]</span>
+                            <input type="number" id="singleAvgDInput" class="numeric-input"
+                                   min="0" max="20" step="1" value="1">
+                            <span id="singleAvgDValue" class="slider-value">1</span>
+                        </div>
+                        <input type="range" id="singleAvgDSlider" min="0" max="20" value="1" step="1">
+                        <div style="font-size:0.6rem; color:var(--dim); margin-top:4px;">
+                            d=0 无变化 &nbsp;|&nbsp; 对已生成像素图应用曼哈顿邻域 RGB 均值
+                        </div>
+                    </div>
+                    <button id="singleAvgBtn" class="neon-btn"
+                            style="border-color: var(--green); color: var(--green);">◉ PIXEL AVERAGE</button>
+                </div>
+            </div>
+
+            <!-- ── 双图混合模式面板（不改动）───────────────────── -->
+            <div id="mixPanel" class="mode-panel">
+                <div class="card">
+                    <div class="card-label">🎴 IMAGE 1 // SOURCE</div>
+                    <div id="mixDropZone1" class="drop-zone">
+                        <div class="drop-icon">⬆️ ⎔</div>
+                        <div class="drop-text">DRAG & DROP IMAGE 1</div>
+                        <input type="file" id="mixFileInput1"
+                               accept="image/jpeg, image/png, image/webp, image/bmp"
+                               style="display: none;">
+                        <div id="mixFileInfo1" class="file-info">waiting...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-label">🎴 IMAGE 2 // SOURCE</div>
+                    <div id="mixDropZone2" class="drop-zone">
+                        <div class="drop-icon">⬆️ ⎔</div>
+                        <div class="drop-text">DRAG & DROP IMAGE 2</div>
+                        <input type="file" id="mixFileInput2"
+                               accept="image/jpeg, image/png, image/webp, image/bmp"
+                               style="display: none;">
+                        <div id="mixFileInfo2" class="file-info">waiting...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-label">🧩 PIXEL RESOLUTION</div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>◢ HORIZONTAL BLOCKS [N]</span>
+                            <input type="number" id="mixNInput" class="numeric-input"
+                                   min="4" max="2000" step="1" value="32">
+                            <span id="mixNValue" class="slider-value">32</span>
+                        </div>
+                        <input type="range" id="mixNSlider" min="4" max="2000" value="32" step="1">
+                        <div style="font-size:0.6rem; color:var(--dim); margin-top:4px;">
+                            max ≤ <span id="mixNMax">—</span> (min of widths)
+                        </div>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>◣ VERTICAL BLOCKS [M]</span>
+                            <input type="number" id="mixMInput" class="numeric-input"
+                                   min="4" max="2000" step="1" value="32">
+                            <span id="mixMValue" class="slider-value">32</span>
+                        </div>
+                        <input type="range" id="mixMSlider" min="4" max="2000" value="32" step="1">
+                        <div style="font-size:0.6rem; color:var(--dim); margin-top:4px;">
+                            max ≤ <span id="mixMMax">—</span> (min of heights)
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span>⚡ TOTAL PIXEL BLOCKS</span>
+                        <span id="mixTotalBlocks" style="color: var(--pink);">1024</span>
+                    </div>
+                    <div class="mix-options" id="mixOptions">
+                        <div data-mode="row"     class="mix-option active">⟷ ROW MIX</div>
+                        <div data-mode="col"     class="mix-option">⟵ COL MIX</div>
+                        <div data-mode="checker" class="mix-option">◈ CHECKER</div>
+                        <div data-mode="func"    class="mix-option">∫ FUNC MIX</div>
+                    </div>
+
+                    <!-- FUNC MIX 函数输入区（仅 func 模式显示） -->
+                    <div id="funcMixInputArea" style="display:none; margin-top:12px;">
+
+                        <!-- 子模式切换：统一函数 / 分通道函数 -->
+                        <div class="mix-options" id="funcSubModeOptions" style="margin-bottom:10px;">
+                            <div data-submode="unified" class="mix-option active">∫ UNIFIED</div>
+                            <div data-submode="channel" class="mix-option">⊕ PER-CHANNEL</div>
+                        </div>
+
+                        <!-- UNIFIED 子面板：一个函数作用于全部通道 -->
+                        <div id="funcUnifiedArea">
+                            <div class="slider-header" style="margin-bottom:6px;">
+                                <span>∫ f(a, b) =</span>
+                            </div>
+                            <input type="text" id="funcMixInput"
+                                   value="a + b"
+                                   placeholder="e.g. a + b, a ^ b, abs(a-b)"
+                                   style="width:100%; background:rgba(0,242,255,0.05);
+                                          border:1px solid var(--cyan); color:var(--cyan);
+                                          font-family:'Share Tech Mono',monospace;
+                                          font-size:0.8rem; padding:6px 10px;
+                                          outline:none; letter-spacing:0.05em;">
+                            <div style="font-size:0.58rem; color:var(--dim); margin-top:5px; line-height:1.6;">
+                                a, b = 通道值 [0-255] &nbsp;|&nbsp; 结果自动 mod 256 &nbsp;|&nbsp; Alpha 固定 255<br>
+                                可用：abs, max, min, floor, ceil, round, sqrt, pow, sin, cos, log
+                            </div>
+                        </div>
+
+                        <!-- PER-CHANNEL 子面板：R/G/B/A 各用独立函数 -->
+                        <div id="funcChannelArea" style="display:none;">
+                            <!-- R -->
+                            <div style="margin-bottom:6px;">
+                                <div class="slider-header" style="margin-bottom:4px;">
+                                    <span style="color:#ff5555;">⬤ R(a, b) =</span>
+                                </div>
+                                <input type="text" id="funcMixR" value="a + b"
+                                       placeholder="e.g. abs(a-b)"
+                                       style="width:100%; background:rgba(255,85,85,0.06);
+                                              border:1px solid #ff5555; color:#ff5555;
+                                              font-family:'Share Tech Mono',monospace;
+                                              font-size:0.8rem; padding:6px 10px;
+                                              outline:none; letter-spacing:0.05em;">
+                            </div>
+                            <!-- G -->
+                            <div style="margin-bottom:6px;">
+                                <div class="slider-header" style="margin-bottom:4px;">
+                                    <span style="color:#55ff88;">⬤ G(a, b) =</span>
+                                </div>
+                                <input type="text" id="funcMixG" value="a + b"
+                                       placeholder="e.g. max(a,b)"
+                                       style="width:100%; background:rgba(85,255,136,0.06);
+                                              border:1px solid #55ff88; color:#55ff88;
+                                              font-family:'Share Tech Mono',monospace;
+                                              font-size:0.8rem; padding:6px 10px;
+                                              outline:none; letter-spacing:0.05em;">
+                            </div>
+                            <!-- B -->
+                            <div style="margin-bottom:6px;">
+                                <div class="slider-header" style="margin-bottom:4px;">
+                                    <span style="color:#5599ff;">⬤ B(a, b) =</span>
+                                </div>
+                                <input type="text" id="funcMixB" value="a + b"
+                                       placeholder="e.g. min(a,b)"
+                                       style="width:100%; background:rgba(85,153,255,0.06);
+                                              border:1px solid #5599ff; color:#5599ff;
+                                              font-family:'Share Tech Mono',monospace;
+                                              font-size:0.8rem; padding:6px 10px;
+                                              outline:none; letter-spacing:0.05em;">
+                            </div>
+                            <!-- A -->
+                            <div style="margin-bottom:4px;">
+                                <div class="slider-header" style="margin-bottom:4px;">
+                                    <span style="color:var(--dim);">⬤ A(a, b) =</span>
+                                </div>
+                                <input type="text" id="funcMixA" value="255"
+                                       placeholder="e.g. 255, max(a,b)"
+                                       style="width:100%; background:rgba(180,180,180,0.06);
+                                              border:1px solid var(--dim); color:var(--dim);
+                                              font-family:'Share Tech Mono',monospace;
+                                              font-size:0.8rem; padding:6px 10px;
+                                              outline:none; letter-spacing:0.05em;">
+                            </div>
+                            <div style="font-size:0.58rem; color:var(--dim); margin-top:5px; line-height:1.6;">
+                                a, b = 通道值 [0-255] &nbsp;|&nbsp; 结果自动 mod 256<br>
+                                可用：abs, max, min, floor, ceil, round, sqrt, pow, sin, cos, log
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button id="mixGenerateBtn" class="neon-btn btn-pixelate">🌀 GENERATE MIXED PIXEL ART</button>
+                </div>
+            </div>
+
+            <!-- ── 通用滤镜（给 id 供 RSA 模式隐藏）────────────── -->
+            <div class="card" id="sharedFilterCard">
+                <div class="card-label">🎨 FILTER // NEON PROCESS</div>
+                <div class="filter-row">
+                    <button id="grayscaleBtn"  class="neon-btn filter-btn">⚫ BLACK & WHITE</button>
+                    <button id="invertBtn"     class="neon-btn filter-btn">🌈 INVERT COLOR</button>
+                    <button id="resetFilterBtn" class="neon-btn filter-btn">⟳ RESET</button>
+                </div>
+                <div class="slider-group" style="margin-top: 12px;">
+                    <div class="slider-header">
+                        <span>🎨 HUE SHIFT (0-360°)</span>
+                        <span id="hueValue" class="slider-value">0°</span>
+                    </div>
+                    <input type="range" id="hueSlider" min="0" max="360" value="0" step="1">
+                </div>
+            </div>
+
+            <!-- ── 通用导出（给 id 供 RSA 模式隐藏）────────────── -->
+            <div class="card" id="sharedExportCard">
+                <div class="card-label">💾 EXPORT // GLITCH</div>
+                <button id="saveBtn"      class="neon-btn">⬇️ SAVE PIXEL ART</button>
+                <button id="resetPixelBtn" class="neon-btn"
+                        style="border-color: var(--pink); color: var(--pink);">⟳ REGENERATE</button>
+                <div class="stat-row">
+                    <span>📐 SOURCE INFO</span>
+                    <span id="imgDimensions" class="badge">— x —</span>
+                </div>
+            </div>
+
+            <!-- ════════════════════════════════════════════════════
+                 RSA 加密模块面板
+                 ════════════════════════════════════════════════════ -->
+            <div id="rsaPanel" class="mode-panel">
+
+                <!-- 操作模式切换：ENCRYPT / DECRYPT -->
+                <div class="card">
+                    <div class="card-label">🔑 OPERATION MODE</div>
+                    <div class="rsa-opmode-row">
+                        <div id="rsaEncryptModeBtn" class="rsa-opmode active" data-op="encrypt">🔐 ENCRYPT</div>
+                        <div id="rsaDecryptModeBtn" class="rsa-opmode"        data-op="decrypt">🔓 DECRYPT</div>
+                    </div>
+                </div>
+
+                <!-- 图片上传区（context-aware：原图 or 加密图） -->
+                <div class="card">
+                    <div class="card-label" id="rsaUploadLabel">🎴 UPLOAD IMAGE</div>
+                    <div id="rsaDropZone" class="drop-zone">
+                        <div class="drop-icon">⬆️ ⎔</div>
+                        <div class="drop-text" id="rsaDropText">DRAG & DROP IMAGE</div>
+                        <div class="drop-text" style="font-size:0.55rem;">or click to browse</div>
+                        <input type="file" id="rsaFileInput"
+                               accept="image/jpeg,image/png,image/webp,image/bmp"
+                               style="display:none;">
+                        <div id="rsaFileInfo" class="file-info">waiting for upload...</div>
+                    </div>
+                </div>
+
+                <!-- ── ENCRYPT 子面板 ───────────────────────────── -->
+                <div id="rsaEncSubPanel">
+
+                    <!-- RSA 模式：SINGLE / MULTI -->
+                    <div class="card">
+                        <div class="card-label">🧮 RSA MODE</div>
+                        <div class="mix-options">
+                            <div id="rsaSingleRSABtn" class="mix-option active">🔐 SINGLE RSA</div>
+                            <div id="rsaMultiRSABtn"  class="mix-option">🔀 MULTI RSA</div>
+                        </div>
+
+                        <!-- 层数控制（MULTI 时显示） -->
+                        <div id="rsaLayerCountRow" style="display:none; margin-top:14px;">
+                            <div class="slider-header">
+                                <span>◈ LAYERS COUNT [L]</span>
+                                <input type="number" id="rsaLayerCountInput"
+                                       class="numeric-input" min="2" max="8" value="2"
+                                       style="width:60px;">
+                            </div>
+                            <div style="font-size:0.6rem;color:var(--dim);margin-top:4px;">range: 2 ~ 8</div>
+                        </div>
+                    </div>
+
+                    <!-- 参数层容器（由 rsaController 动态生成） -->
+                    <div id="rsaLayersContainer"></div>
+
+                    <!-- 一键全部自动生成 -->
+                    <div class="card" style="padding-top:12px; padding-bottom:12px;">
+                        <button id="rsaAutoAllBtn" class="neon-btn"
+                                style="border-color:var(--green);color:var(--green);margin-top:0;">
+                            ⚙ AUTO GENERATE ALL PARAMS
+                        </button>
+                    </div>
+
+                </div><!-- /rsaEncSubPanel -->
+
+                <!-- ── DECRYPT 子面板 ───────────────────────────── -->
+                <div id="rsaDecSubPanel" style="display:none;">
+                    <div class="card">
+                        <div class="card-label">🔑 UPLOAD KEY FILE</div>
+                        <div id="rsaKeyDropZone" class="drop-zone">
+                            <div class="drop-icon">🗝️</div>
+                            <div class="drop-text">DRAG & DROP .pspkey FILE</div>
+                            <div class="drop-text" style="font-size:0.55rem;">or click to browse</div>
+                            <input type="file" id="rsaKeyFileInput"
+                                   accept=".pspkey,application/json"
+                                   style="display:none;">
+                            <div id="rsaKeyFileInfo" class="file-info">waiting for key file...</div>
+                        </div>
+                        <!-- 解析后的密钥内容展示 -->
+                        <div id="rsaKeyInfoBox" class="rsa-key-info-box" style="display:none;"></div>
+                    </div>
+                </div><!-- /rsaDecSubPanel -->
+
+                <!-- 进度条 -->
+                <div id="rsaProgressWrap" class="rsa-progress-wrap" style="display:none;">
+                    <div class="card-label" style="margin-bottom:0;">⚡ PROCESSING</div>
+                    <div class="rsa-progress-track">
+                        <div id="rsaProgressFill" class="rsa-progress-fill" style="width:0%;"></div>
+                    </div>
+                    <div class="rsa-progress-footer">
+                        <span id="rsaProgressMsg">—</span>
+                        <span id="rsaProgressPct" class="rsa-progress-pct">0%</span>
+                    </div>
+                </div>
+
+                <!-- 执行按钮 -->
+                <div class="card" style="padding-top:12px; padding-bottom:12px;">
+                    <button id="rsaEncryptAction" class="neon-btn btn-pixelate" style="margin-top:0;">
+                        🔐 ENCRYPT IMAGE
+                    </button>
+                    <button id="rsaDecryptAction" class="neon-btn btn-pixelate"
+                            style="display:none; margin-top:0;
+                                   border-color:var(--green); color:var(--green);
+                                   background:linear-gradient(95deg,rgba(62,255,158,0.08),rgba(0,242,255,0.08));">
+                        🔓 DECRYPT IMAGE
+                    </button>
+                </div>
+
+                <!-- 导出 -->
+                <div class="card">
+                    <div class="card-label">💾 EXPORT</div>
+                    <button id="rsaSaveEncBtn" class="neon-btn" style="display:none;">
+                        ⬇ ENCRYPTED PNG
+                    </button>
+                    <button id="rsaSaveKeyBtn" class="neon-btn"
+                            style="display:none; border-color:var(--yellow); color:var(--yellow);">
+                        ⬇ KEY FILE (.pspkey)
+                    </button>
+                    <button id="rsaSaveDecBtn" class="neon-btn"
+                            style="display:none; border-color:var(--green); color:var(--green);">
+                        ⬇ DECRYPTED PNG
+                    </button>
+                </div>
+
+            </div><!-- /rsaPanel -->
+
+        </div><!-- /panel-left -->
+
+        <!-- ════════════════════════════════════════════════════════
+             右侧预览区
+             ════════════════════════════════════════════════════════ -->
+        <div class="panel-right">
+
+            <!-- 原有预览卡片（给 id 供 RSA 模式隐藏） -->
+            <div class="img-card" id="mainPreviewCard">
+                <div class="img-title">
+                    <span>🎴 ORIGINAL PREVIEW</span>
+                    <span id="origStatus" class="badge">NO DATA</span>
+                </div>
+                <div class="canvas-container" id="previewContainer">
+                    <canvas id="singlePreviewCanvas" class="preview-canvas"
+                            width="400" height="300"
+                            style="max-width:100%; height:auto; background:#000;"></canvas>
+                    <div id="mixPreviewContainer"
+                         style="display: flex; gap: 12px; justify-content: center;">
+                        <canvas id="mixPreviewCanvas1" class="preview-canvas"
+                                width="180" height="135" style="background:#000;"></canvas>
+                        <canvas id="mixPreviewCanvas2" class="preview-canvas"
+                                width="180" height="135" style="background:#000;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 原有结果卡片（给 id 供 RSA 模式隐藏） -->
+            <div class="img-card" id="mainResultCard">
+                <div class="img-title">
+                    <span>🖥️ PIXEL // CYBER ART</span>
+                    <span id="pixelStatus" class="badge">AWAITING</span>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="pixelCanvas" class="pixel-canvas" width="320" height="320"></canvas>
+                </div>
+            </div>
+
+            <!-- RSA 模式专属：源图预览（初始隐藏） -->
+            <div class="img-card" id="rsaPreviewCard" style="display:none;">
+                <div class="img-title">
+                    <span id="rsaPreviewTitle">🎴 SOURCE IMAGE</span>
+                    <span id="rsaPreviewStatus" class="badge">NO DATA</span>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="rsaPreviewCanvas" class="preview-canvas"
+                            width="400" height="300"
+                            style="max-width:100%; height:auto; background:#000;"></canvas>
+                </div>
+            </div>
+
+            <!-- RSA 模式专属：加密/解密结果（初始隐藏） -->
+            <div class="img-card" id="rsaResultCard" style="display:none;">
+                <div class="img-title">
+                    <span id="rsaResultTitle">🔐 ENCRYPTED RESULT</span>
+                    <span id="rsaResultStatus" class="badge">AWAITING</span>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="rsaResultCanvas" class="preview-canvas"
+                            style="max-width:100%; height:auto; background:#000;"></canvas>
+                </div>
+            </div>
+
+        </div><!-- /panel-right -->
+
+    </div><!-- /root -->
+
+    <!-- 模块加载顺序：纯工具 → 背景 → RSA 核心 → 主控制器 → RSA 控制器 -->
+    <script src="pixelEngine.js"></script>
+    <script src="colorUtils.js"></script>
+    <script src="background.js"></script>
+    <script src="rsaModule.js"></script>
+    <script src="app.js"></script>
+    <script src="rsaController.js"></script>
+</body>
+</html>

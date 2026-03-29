@@ -1,0 +1,200 @@
+/* ════════════════════════════════════════════════════════════════
+   rsa.css — RSA 像素加密模块专属样式
+   依赖 pspixel.css 中的 CSS 变量（--cyan / --pink / --green 等）
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── 操作模式切换（ENCRYPT / DECRYPT）─────────────────────────── */
+.rsa-opmode-row {
+    display: flex;
+    gap: 10px;
+}
+
+.rsa-opmode {
+    flex: 1;
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    padding: 7px 8px;
+    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+    color: var(--dim);
+    user-select: none;
+}
+
+.rsa-opmode.active[data-op="encrypt"] {
+    border-color: var(--cyan);
+    background: rgba(0, 242, 255, 0.10);
+    color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.22);
+}
+
+.rsa-opmode.active[data-op="decrypt"] {
+    border-color: var(--green);
+    background: rgba(62, 255, 158, 0.10);
+    color: var(--green);
+    box-shadow: 0 0 10px rgba(62, 255, 158, 0.22);
+}
+
+/* ── 参数层卡片 ────────────────────────────────────────────────── */
+.rsa-layer-card {
+    margin-bottom: 0;
+}
+
+.rsa-layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rsa-layer-header .card-label {
+    margin-bottom: 0;
+}
+
+.rsa-layer-auto {
+    width: auto !important;
+    margin-top: 0 !important;
+    padding: 3px 10px !important;
+    font-size: 0.62rem !important;
+    letter-spacing: 1px;
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+}
+
+/* ── 参数网格 ──────────────────────────────────────────────────── */
+.rsa-param-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 12px;
+}
+
+.rsa-param-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rsa-param-label {
+    font-size: 0.62rem;
+    color: var(--dim);
+    width: 68px;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+}
+
+.rsa-param-input {
+    flex: 1;
+    min-width: 0;
+    background: #0a0a1a;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    padding: 3px 6px;
+    text-align: center;
+    outline: none;
+    border-radius: 0;
+}
+
+.rsa-param-input[readonly] {
+    border-color: var(--border);
+    color: var(--dim);
+    background: rgba(0, 0, 0, 0.4);
+    cursor: default;
+}
+
+.rsa-param-input.rsa-privkey[readonly] {
+    border-color: rgba(255, 45, 158, 0.4);
+    color: var(--pink);
+    background: rgba(255, 45, 158, 0.04);
+}
+
+.rsa-icon-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--cyan);
+    cursor: pointer;
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    transition: 0.15s;
+    flex-shrink: 0;
+    line-height: 1.4;
+    font-family: inherit;
+}
+
+.rsa-icon-btn:hover {
+    border-color: var(--cyan);
+    background: rgba(0, 242, 255, 0.10);
+}
+
+.rsa-param-status {
+    font-size: 0.62rem;
+    margin-top: 6px;
+    min-height: 15px;
+    padding-left: 4px;
+    letter-spacing: 0.3px;
+}
+
+.rsa-param-status.valid   { color: var(--green); }
+.rsa-param-status.invalid { color: var(--pink);  }
+
+/* ── 密钥文件信息展示框 ────────────────────────────────────────── */
+.rsa-key-info-box {
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    font-size: 0.63rem;
+    line-height: 2.0;
+    color: var(--dim);
+    word-break: break-all;
+}
+
+.rsa-key-info-box .kv       { color: var(--cyan);  }
+.rsa-key-info-box .kv-pink  { color: var(--pink);  }
+.rsa-key-info-box .kv-green { color: var(--green); }
+
+/* ── 进度条 ────────────────────────────────────────────────────── */
+.rsa-progress-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.rsa-progress-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 242, 255, 0.07);
+    border: 1px solid var(--border);
+    margin: 8px 0 5px;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 3px) 0, 100% 3px, 100% 100%, 3px 100%, 0 calc(100% - 3px));
+    overflow: hidden;
+}
+
+.rsa-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--cyan), var(--pink));
+    transition: width 0.12s ease;
+    box-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+}
+
+.rsa-progress-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.65rem;
+    color: var(--dim);
+}
+
+.rsa-progress-pct {
+    color: var(--cyan);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
